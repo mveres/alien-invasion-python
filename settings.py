@@ -16,3 +16,4 @@ class Settings():
         self.bg_color = 20, 20, 20
         self.ship = Ship()
         self.bullet = Bullet()
+        self.allowed_bullets_no = 5
