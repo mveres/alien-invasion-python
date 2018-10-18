@@ -1,6 +1,9 @@
 import sys
 import pygame
+from pygame.sprite import Group
+
 from bullet import Bullet
+from alien import Alien
 
 
 def fire_bullet(settings, ship, bullets):
@@ -36,12 +39,13 @@ def check_events(settings, ship, bullets):
             check_keyup_events(event, ship)
 
 
-def update_screen(settings, screen, ship, alien, bullets):
+def update_screen(settings, screen, ship, aliens, bullets):
     screen.fill(settings.bg_color)
 
     screen.blit(ship.image, ship.rect)
 
-    screen.blit(alien.image, alien.rect)
+    for alien in aliens:
+        screen.blit(alien.image, alien.rect)
 
     for bullet in bullets:
         pygame.draw.rect(screen, bullet.color, bullet.rect)
@@ -53,9 +57,35 @@ def update_screen(settings, screen, ship, alien, bullets):
 def update_bullets(bullets):
     bullets.update()
 
-    def is_out(b): return b.rect.bottom <= 0
+    def is_inside(b):
+        return b.rect.bottom > 0
 
-    bullets_to_delete = [b for b in bullets.copy() if is_out(b)]
+    return Group([b for b in bullets if is_inside(b)])
 
-    for b in bullets_to_delete:
-        bullets.remove(b)
+
+def get_rows_no(settings, alien_height, ship_height):
+    vertical_space = settings.screen_size[1] - 3 * alien_height - ship_height
+    return int(vertical_space / (2 * alien_height))
+
+
+def get_cols_no(settings, alien_width):
+    horizontal_space = settings.screen_size[0] - 2 * alien_width
+    return int(horizontal_space / (2 * alien_width))
+
+
+def create_fleet(settings, screen, ship):
+    alien_width = Alien().rect.width
+    alien_height = Alien().rect.height
+    ship_height = ship.rect.height
+
+    rows = get_rows_no(settings, alien_height, ship_height)
+    cols = get_cols_no(settings, alien_width)
+
+    def create_alien(pos):
+        x = alien_width + pos[1] * 2 * alien_width
+        y = alien_height + pos[0] * 2 * alien_height
+        return Alien(x, y)
+
+    table = [(row, col) for row in range(rows) for col in range(cols)]
+    aliens = map(create_alien, table)
+    return Group(list(aliens))
