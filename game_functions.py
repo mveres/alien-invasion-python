@@ -1,9 +1,11 @@
 import sys
 import pygame
+from random import randint
 from pygame.sprite import Group
 
 from bullet import Bullet
 from alien import Alien
+from star import Star
 
 
 def fire_bullet(settings, ship, bullets):
@@ -39,8 +41,11 @@ def check_events(settings, ship, bullets):
             check_keyup_events(event, ship)
 
 
-def update_screen(settings, screen, ship, aliens, bullets):
+def update_screen(settings, screen, ship, stars, aliens, bullets):
     screen.fill(settings.bg_color)
+
+    for star in stars:
+        pygame.draw.rect(screen, star.color, star.rect)
 
     screen.blit(ship.image, ship.rect)
 
@@ -73,7 +78,7 @@ def get_cols_no(settings, alien_width):
     return int(horizontal_space / (2 * alien_width))
 
 
-def create_fleet(settings, screen, ship):
+def create_fleet(settings, ship):
     alien_width = Alien().rect.width
     alien_height = Alien().rect.height
     ship_height = ship.rect.height
@@ -82,10 +87,24 @@ def create_fleet(settings, screen, ship):
     cols = get_cols_no(settings, alien_width)
 
     def create_alien(pos):
-        x = alien_width + pos[1] * 2 * alien_width
-        y = alien_height + pos[0] * 2 * alien_height
+        (row, col) = pos
+        x = alien_width + col * 2 * alien_width
+        y = alien_height + row * 2 * alien_height
         return Alien(x, y)
 
     table = [(row, col) for row in range(rows) for col in range(cols)]
     aliens = map(create_alien, table)
     return Group(list(aliens))
+
+
+def create_stars(settings):
+    (width, height) = settings.screen_size
+    no_of_stars = int(width * height * settings.star.density)
+
+    def create_star(_):
+        x = randint(0, width)
+        y = randint(0, height)
+        return Star(settings, (x, y))
+
+    stars = map(create_star, range(no_of_stars))
+    return Group(list(stars))
