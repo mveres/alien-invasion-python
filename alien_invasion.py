@@ -15,13 +15,17 @@ def run_game():
 
     ship = Ship(screen, settings)
     bullets = Group()
-    aliens = gf.create_fleet(settings, ship)
+    aliens = Group()
+    gf.create_fleet(settings, ship, aliens)
     stars = gf.create_stars(settings)
 
     while True:
         gf.check_events(settings, ship, bullets)
         ship.update()
-        bullets = gf.update_bullets(bullets)
+        gf.update_aliens(aliens, screen)
+        gf.update_bullets(bullets, aliens)
+
+        gf.collisions_check(settings, ship, bullets, aliens)
 
         gf.update_screen(settings, screen, ship, stars, aliens, bullets)
 

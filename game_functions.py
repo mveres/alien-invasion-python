@@ -59,13 +59,33 @@ def update_screen(settings, screen, ship, stars, aliens, bullets):
     pygame.display.flip()
 
 
-def update_bullets(bullets):
+def update_bullets(bullets, aliens):
     bullets.update()
 
-    def is_inside(b):
-        return b.rect.bottom > 0
+    def is_outside(b):
+        return b.rect.bottom <= 0
 
-    return Group([b for b in bullets if is_inside(b)])
+    for bullet in [b for b in bullets if is_outside(b)]:
+        bullets.remove(bullet)
+
+    pygame.sprite.groupcollide(bullets, aliens, True, True)
+
+
+def update_aliens(aliens, screen):
+    if any([alien.has_reached_edge(screen) for alien in aliens]):
+        for alien in aliens:
+            alien.drop()
+
+    aliens.update()
+
+
+def collisions_check(settings, ship, bullets, aliens):
+    if pygame.sprite.spritecollideany(ship, aliens):
+        print('Ship hit!!!')
+
+    if len(aliens) == 0:
+        bullets.empty()
+        create_fleet(settings, ship, aliens)
 
 
 def get_rows_no(settings, alien_height, ship_height):
@@ -78,9 +98,10 @@ def get_cols_no(settings, alien_width):
     return int(horizontal_space / (2 * alien_width))
 
 
-def create_fleet(settings, ship):
-    alien_width = Alien().rect.width
-    alien_height = Alien().rect.height
+def create_fleet(settings, ship, aliens):
+    alien_rect = Alien(settings).rect
+    alien_width = alien_rect.width
+    alien_height = alien_rect.height
     ship_height = ship.rect.height
 
     rows = get_rows_no(settings, alien_height, ship_height)
@@ -90,11 +111,11 @@ def create_fleet(settings, ship):
         (row, col) = pos
         x = alien_width + col * 2 * alien_width
         y = alien_height + row * 2 * alien_height
-        return Alien(x, y)
+        return Alien(settings, (x, y))
 
     table = [(row, col) for row in range(rows) for col in range(cols)]
-    aliens = map(create_alien, table)
-    return Group(list(aliens))
+    for alien in map(create_alien, table):
+        aliens.add(alien)
 
 
 def create_stars(settings):

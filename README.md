@@ -5,5 +5,5 @@ Custom Alien Invasion game in Python implementation  according to "PYTHON CRASH 
 ## To run the game:
 ```
 1. git clone
-2. python3 alien_invasion3
+2. python3 alien_invasion
 ```
