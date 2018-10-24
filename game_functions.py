@@ -1,6 +1,7 @@
 import sys
 import pygame
 from random import randint
+from time import sleep
 from pygame.sprite import Group
 
 from bullet import Bullet
@@ -79,9 +80,23 @@ def update_aliens(aliens, screen):
     aliens.update()
 
 
-def collisions_check(settings, ship, bullets, aliens):
+def handle_hit(settings, ship, bullets, aliens, stats):
+    stats.ships_left -= 1
+    aliens.empty()
+    bullets.empty()
+
+    create_fleet(settings, ship, aliens)
+    ship.to_center()
+
+    sleep(1)
+
+
+def collisions_check(settings, screen, ship, bullets, aliens, stats):
     if pygame.sprite.spritecollideany(ship, aliens):
-        print('Ship hit!!!')
+        handle_hit(settings, ship, bullets, aliens, stats)
+
+    if any([alien.has_reached_bottom(screen) for alien in aliens]):
+        handle_hit(settings, ship, bullets, aliens, stats)
 
     if len(aliens) == 0:
         bullets.empty()

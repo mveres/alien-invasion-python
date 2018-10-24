@@ -29,3 +29,6 @@ class Alien(Sprite):
         has_reached_right_edge = self.rect.right >= screen.get_rect().right
         has_reached_left_edge = self.rect.left <= 0
         return has_reached_left_edge or has_reached_right_edge
+
+    def has_reached_bottom(self, screen):
+        return self.rect.bottom >= screen.get_rect().bottom

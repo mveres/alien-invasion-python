@@ -1,13 +1,13 @@
 class Bullet():
     def __init__(self):
-        self.speed_factor = 4
+        self.speed_factor = 10
         self.size = 2, 15
         self.color = 244, 176, 66
 
 
 class Ship():
     def __init__(self):
-        self.speed_factor = 2
+        self.speed_factor = 8
         self.limit = 3
 
 
@@ -20,7 +20,7 @@ class Star():
 
 class Alien():
     def __init__(self):
-        self.speed_factor = 1
+        self.speed_factor = 5
         self.fleet_drop_speed = 10
         self.fleet_initial_direction = 1  # 1 = left, -1 = right
 

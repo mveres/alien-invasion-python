@@ -7,3 +7,7 @@ Custom Alien Invasion game in Python implementation  according to "PYTHON CRASH 
 1. git clone
 2. python3 alien_invasion
 ```
+
+
+## Demo
+![gif not available](https://github.com/mveres/alien-invasion-python/blob/master/demo/alien_invasion.gif)
